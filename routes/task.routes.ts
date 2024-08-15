@@ -1,11 +1,12 @@
 import { Router } from 'express'
-import * as TasksController from '../controllers/task'
+import * as TasksController from '../controllers/task.controller'
 
 const taskRouter = Router()
 const taskRoutes = (baseRouter: Router) => {
 	baseRouter.use('/task', taskRouter)
 
-    baseRouter.get('/getTask', TasksController.getTask)
+    baseRouter.get('/getPendingTasks', TasksController.getPendingTasks)
+    baseRouter.get('/getCompletedTasks', TasksController.getCompletedTasks)
 }
 
 export default taskRoutes

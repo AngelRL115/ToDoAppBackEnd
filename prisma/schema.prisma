@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model task {
+  idTask          Int        @id @default(autoincrement())
+  User_idUser     Int
+  Title           String?    @db.VarChar(100)
+  Description     String?    @db.Text
+  Status_idStatus Int
+  CreatedAt       DateTime   @default(now()) @db.Timestamp(0)
+  UpdatedAt       DateTime   @default(now()) @db.Timestamp(0)
+  taskstatus      taskstatus @relation(fields: [Status_idStatus], references: [idStatus], onDelete: NoAction, onUpdate: NoAction, map: "fk_Task_Status")
+  user            user       @relation(fields: [User_idUser], references: [idUser], onDelete: Cascade, onUpdate: NoAction, map: "fk_Task_User")
+
+  @@index([Status_idStatus], map: "fk_Task_Status_idx")
+  @@index([User_idUser], map: "fk_Task_User_idx")
+}
+
+model taskstatus {
+  idStatus   Int    @id @default(autoincrement())
+  StatusName String @unique(map: "StatusName_UNIQUE") @db.VarChar(45)
+  task       task[]
+}
+
+model user {
+  idUser    Int      @id @default(autoincrement())
+  Name      String?  @db.VarChar(45)
+  Username  String   @unique(map: "Username_UNIQUE") @db.VarChar(45)
+  Email     String   @unique(map: "Email_UNIQUE") @db.VarChar(45)
+  Password  String   @db.VarChar(45)
+  CreatedAt DateTime @default(now()) @db.Timestamp(0)
+  UpdatedAt DateTime @default(now()) @db.Timestamp(0)
+  task      task[]
+}
