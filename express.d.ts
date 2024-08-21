@@ -1,7 +1,7 @@
 import { JwtPayload } from 'jsonwebtoken'
 
 export interface JwtPayloadExtended extends JwtPayload {
-	userId: number
+	userid: number
 }
 
 declare global {

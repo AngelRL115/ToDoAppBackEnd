@@ -1,12 +1,14 @@
 import { Router } from 'express'
-import * as TasksController from '../controllers/task.controller'
+import * as TaskController from '../controllers/task.controller'
+import authenticate from '../middlewares/Auth/authenticate'
 
 const taskRouter = Router()
 const taskRoutes = (baseRouter: Router) => {
 	baseRouter.use('/task', taskRouter)
+    
+	taskRouter.use('', authenticate)
 
-    baseRouter.get('/getPendingTasks', TasksController.getPendingTasks)
-    baseRouter.get('/getCompletedTasks', TasksController.getCompletedTasks)
+	taskRouter.post('/createTask', TaskController.createTask)
 }
 
 export default taskRoutes
