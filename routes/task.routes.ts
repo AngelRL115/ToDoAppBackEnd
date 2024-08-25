@@ -8,7 +8,13 @@ const taskRoutes = (baseRouter: Router) => {
     
 	taskRouter.use('', authenticate)
 
+	taskRouter.get('/getPendingTasks', TaskController.getPendingTasks)
+	taskRouter.get('/getCompletedTasks', TaskController.getCompletedTasks)
 	taskRouter.post('/createTask', TaskController.createTask)
+	taskRouter.put('/updateTask', TaskController.updateTask)
+	taskRouter.put('/checkTask', TaskController.checkTask)
+	taskRouter.put('/uncheckTask', TaskController.uncheckTask)
+	taskRouter.delete('/deleteTask',TaskController.deleteTask)
 }
 
 export default taskRoutes

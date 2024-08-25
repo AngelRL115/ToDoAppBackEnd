@@ -1,4 +1,4 @@
-import { Request, response, Response } from 'express'
+import { Request, Response } from 'express'
 import prisma from '../prisma/prisma'
 import { JwtPayloadExtended } from '../express'
 import { StatusCodes } from 'http-status-codes'
@@ -97,7 +97,6 @@ export const createTask = async (req: Request, res: Response) => {
 			return res.status(responseStatus).send(responseContent)
 		}
 
-
 		const newTaskCreated = await prisma.task.create({
 			data: {
 				User_idUser: user.userid,
@@ -163,7 +162,7 @@ export const updateTask = async (req: Request, res: Response) => {
 			},
 		})
 		if (!taskUpdated) {
-			responseStatus = StatusCodes.BAD_GATEWAY
+			responseStatus = StatusCodes.BAD_REQUEST
 			responseContent = { error: 'Task cannot be updated' }
 			console.error(taskUpdated)
 			return res.status(responseStatus).send(responseContent)
@@ -178,7 +177,105 @@ export const updateTask = async (req: Request, res: Response) => {
 	res.status(responseStatus).send(responseContent)
 }
 
-//Fata hacer la funcion para el check y el uncheck dependiendo si la task ya fue finalizada o no
+export const checkTask = async (req: Request, res: Response) => {
+	const user = req.user as JwtPayloadExtended
+	let responseStatus = StatusCodes.OK
+	let responseContent
+
+	try {
+		const { idTask } = req.body
+		const taskDetails = await prisma.task.findUnique({ where: { idTask: idTask } })
+
+		if (taskDetails?.User_idUser != user.userid) {
+			responseStatus = StatusCodes.UNAUTHORIZED
+			responseContent = { error: 'This task does not belong to the current user' }
+			return res.status(responseStatus).send(responseContent)
+		}
+
+		if (!taskDetails) {
+			responseStatus = StatusCodes.BAD_REQUEST
+			responseContent = { error: 'Task cannot be found' }
+			console.error(taskDetails)
+			return res.status(responseStatus).send(responseContent)
+		}
+
+		const taskChecked = await prisma.task.update({
+			data: {
+				Status_idStatus: 1,
+			},
+			where: {
+				idTask: taskDetails.idTask,
+			},
+		})
+
+		if (!taskChecked) {
+			responseStatus = StatusCodes.BAD_REQUEST
+			responseContent = { error: 'Task cannot be updated' }
+			console.error(taskDetails)
+			return res.status(responseStatus).send(responseContent)
+		}
+
+		responseContent = taskChecked
+
+	} catch (error) {
+		responseStatus = StatusCodes.INTERNAL_SERVER_ERROR
+		responseContent = { error: `[UPDATE] taskController/checkTask error: ${error}` }
+		console.error(error)
+		return res.status(responseStatus).send(responseContent)
+	}
+
+	res.status(responseStatus).send(responseContent)
+}
+
+export const uncheckTask = async (req: Request, res: Response) => {
+	const user = req.user as JwtPayloadExtended
+	let responseStatus = StatusCodes.OK
+	let responseContent
+
+	try {
+		const { idTask } = req.body
+		const taskDetails = await prisma.task.findUnique({ where: { idTask: idTask } })
+
+		if (taskDetails?.User_idUser != user.userid) {
+			responseStatus = StatusCodes.UNAUTHORIZED
+			responseContent = { error: 'This task does not belong to the current user' }
+			return res.status(responseStatus).send(responseContent)
+		}
+
+		if (!taskDetails) {
+			responseStatus = StatusCodes.BAD_REQUEST
+			responseContent = { error: 'Task cannot be found' }
+			console.error(taskDetails)
+			return res.status(responseStatus).send(responseContent)
+		}
+
+		const taskUnchecked = await prisma.task.update({
+			data: {
+				Status_idStatus: 2,
+			},
+			where: {
+				idTask: taskDetails.idTask,
+			},
+		})
+
+		if (!taskUnchecked) {
+			responseStatus = StatusCodes.BAD_REQUEST
+			responseContent = { error: 'Task cannot be updated' }
+			console.error(taskDetails)
+			return res.status(responseStatus).send(responseContent)
+		}
+
+		responseContent = taskUnchecked
+
+	} catch (error) {
+		responseStatus = StatusCodes.INTERNAL_SERVER_ERROR
+		responseContent = { error: `[UPDATE] taskController/checkTask error: ${error}` }
+		console.error(error)
+		return res.status(responseStatus).send(responseContent)
+	}
+
+	res.status(responseStatus).send(responseContent)
+}
 
 export const deleteTask = async (req: Request, res: Response) => {
 	const user = req.user as JwtPayloadExtended
