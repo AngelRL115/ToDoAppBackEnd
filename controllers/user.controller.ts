@@ -3,7 +3,7 @@ in this controller are methods to
 
 - get user profile information
 - update user profile information (name, lastname, email)
-- update user password
+- update user password (oldPassword, newPassword)
 
 */
 

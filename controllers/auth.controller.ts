@@ -1,8 +1,8 @@
 /*  controllers/auth.controller.ts 
 in this controller are methods to
 
-- register new user
-- login
+- register new user (name, username, email, password)
+- login (username | email, password)
 
 */
 

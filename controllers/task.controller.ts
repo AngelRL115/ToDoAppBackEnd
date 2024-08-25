@@ -1,3 +1,16 @@
+/*  controllers/auth.controller.ts 
+in this controller are methods to
+
+- Get pending tasks
+- Get completed tasks
+- Create new task (title, description)
+- Update task (idTask, title, description)
+- Check task (idTask)
+- Uncheck task (idTask)
+- Delete task (idTask)
+
+*/
+
 import { Request, Response } from 'express'
 import prisma from '../prisma/prisma'
 import { JwtPayloadExtended } from '../express'
